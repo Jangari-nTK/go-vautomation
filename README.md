@@ -1,0 +1,1 @@
+# go-vsphere-automation
