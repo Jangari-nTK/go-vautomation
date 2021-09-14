@@ -20,7 +20,7 @@ func TestNewClientSuccess(t *testing.T) {
 func TestNewClientFailedByMalformedURL(t *testing.T) {
 	_, err := NewClient("thisismalformedurl", nil)
 	if err == nil {
-		t.Fatal("failed: cannot create API client", err.Error())
+		t.Fatal("failed: API client is created incorrectly", err.Error())
 	}
 }
 
@@ -74,7 +74,6 @@ func TestCreateSessionSuccess(t *testing.T) {
 
 	if c.SessionID == "" {
 		t.Fatal("failed: Session id is not set")
-	} else {
-		fmt.Println(c.SessionID)
 	}
+	fmt.Println(c.SessionID)
 }
