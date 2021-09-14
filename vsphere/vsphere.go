@@ -23,10 +23,6 @@ type Client struct {
 	Logger    *log.Logger
 }
 
-type SessionID struct {
-	value string
-}
-
 const version = "v0.1"
 
 var userAgent = fmt.Sprintf("XXXGoClient/%s (%s)", version, runtime.Version())
@@ -63,6 +59,9 @@ func (c *Client) newRequest(ctx context.Context, method, spath string, body io.R
 		return nil, err
 	}
 
+	if ctx == nil {
+		ctx = context.Background()
+	}
 	req = req.WithContext(ctx)
 	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
 	req.Header.Set("User-Agent", userAgent)
@@ -74,7 +73,7 @@ func (c *Client) newRequest(ctx context.Context, method, spath string, body io.R
 }
 
 func (c *Client) createSession(ctx context.Context, username, password string) error {
-	req, err := c.newRequest(ctx, "GET", "/api/session", nil, false)
+	req, err := c.newRequest(ctx, "POST", "/api/session", nil, false)
 	if err != nil {
 		return err
 	}
@@ -85,11 +84,11 @@ func (c *Client) createSession(ctx context.Context, username, password string) e
 		return err
 	}
 
-	var sessionId SessionID
+	var sessionId string
 	if err := decodeBody(res, &sessionId); err != nil {
 		return err
 	}
-	c.SessionID = sessionId.value
+	c.SessionID = sessionId
 
 	return nil
 }
