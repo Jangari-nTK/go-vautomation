@@ -1,4 +1,4 @@
-module github.com/Jangari-nTK/go-vsphere-automation
+module github.com/Jangari-nTK/go-vautomation
 
 go 1.17
 
