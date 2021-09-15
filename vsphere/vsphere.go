@@ -2,6 +2,7 @@ package vsphere
 
 import (
 	"context"
+	"crypto/tls"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -23,13 +24,19 @@ type Client struct {
 	Logger    *log.Logger
 }
 
+type APIError struct {
+	Error_Type string
+	Messages   []map[string]interface{}
+	Data       interface{}
+}
+
 const version = "v0.1"
 
 var userAgent = fmt.Sprintf("XXXGoClient/%s (%s)", version, runtime.Version())
 
-func decodeBody(resp *http.Response, out interface{}) error {
-	defer resp.Body.Close()
-	decoder := json.NewDecoder(resp.Body)
+func decodeBody(res *http.Response, out interface{}) error {
+	defer res.Body.Close()
+	decoder := json.NewDecoder(res.Body)
 	return decoder.Decode(out)
 }
 
@@ -45,9 +52,20 @@ func NewClient(urlStr string, logger *log.Logger) (*Client, error) {
 		logger = discardLogger
 	}
 
-	client := &Client{parsedURL, new(http.Client), "", logger}
+	c := &Client{parsedURL, new(http.Client), "", logger}
 
-	return client, nil
+	return c, nil
+}
+
+func (c *Client) ignoreInsecureTLSCertificate(ignore bool) error {
+	if ignore {
+		c.HTTPClient.Transport = &http.Transport{
+			TLSClientConfig: &tls.Config{
+				InsecureSkipVerify: true,
+			},
+		}
+	}
+	return nil
 }
 
 func (c *Client) newRequest(ctx context.Context, method, spath string, body io.Reader, useSessionId bool) (*http.Request, error) {
@@ -82,6 +100,16 @@ func (c *Client) createSession(ctx context.Context, username, password string) e
 	res, err := c.HTTPClient.Do(req)
 	if err != nil {
 		return err
+	}
+
+	if res.StatusCode != 201 {
+		var apiError APIError
+		if err := decodeBody(res, &apiError); err != nil {
+			return err
+		}
+		return errors.New(
+			fmt.Sprintf("status:%s messages:%s id:%s", apiError.Error_Type, apiError.Messages[0]["default_message"], apiError.Messages[0]["id"]),
+		)
 	}
 
 	var sessionId string
