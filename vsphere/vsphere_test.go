@@ -2,9 +2,7 @@ package vsphere
 
 import (
 	"context"
-	"crypto/tls"
 	"fmt"
-	"net/http"
 	"testing"
 )
 
@@ -60,8 +58,6 @@ func TestNewRequestWithNilContext(t *testing.T) {
 }
 
 func TestCreateSessionSuccess(t *testing.T) {
-	http.DefaultTransport.(*http.Transport).TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
-
 	c, err := NewClient(vcUrl, nil)
 	if err != nil {
 		t.Fatal("failed: cannot create API client")
@@ -76,4 +72,17 @@ func TestCreateSessionSuccess(t *testing.T) {
 		t.Fatal("failed: Session id is not set")
 	}
 	fmt.Println(c.SessionID)
+}
+
+func TestCreateSessionFailedByIncorrectCredential(t *testing.T) {
+	c, err := NewClient(vcUrl, nil)
+	if err != nil {
+		t.Fatal("failed: cannot create API client")
+	}
+
+	err = c.createSession(context.Background(), "administrator@vsphere.local", "aaaa")
+	if err == nil {
+		t.Fatal("failed: unexpected authentication occured")
+	}
+	fmt.Println(err)
 }
