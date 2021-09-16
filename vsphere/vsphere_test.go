@@ -7,6 +7,8 @@ import (
 )
 
 const vcUrl = "https://vcsa.tanzu.local"
+const ssoUser = "administrator@vsphere.local"
+const ssoPass = "VMware1!"
 
 func TestNewClientSuccess(t *testing.T) {
 	_, err := NewClient(vcUrl, nil)
@@ -64,7 +66,7 @@ func TestCreateSessionSuccess(t *testing.T) {
 	}
 
 	ctx := context.Background()
-	err = c.createSession(ctx, "administrator@vsphere.local", "VMware1!")
+	err = c.createSession(ctx, ssoUser, ssoPass)
 	if err != nil {
 		t.Fatal("failed: cannot create API session", err.Error())
 	}
@@ -82,7 +84,7 @@ func TestCreateSessionFailedByIncorrectCredential(t *testing.T) {
 	}
 
 	ctx := context.Background()
-	err = c.createSession(ctx, "administrator@vsphere.local", "aaaa")
+	err = c.createSession(ctx, ssoUser, "incorrectPassword")
 	if err == nil {
 		t.Fatal("failed: unexpected authentication occured")
 	}
@@ -96,7 +98,7 @@ func TestCreateVcenterTlsCsrSuccess(t *testing.T) {
 	}
 
 	ctx := context.Background()
-	err = c.createSession(ctx, "administrator@vsphere.local", "VMware1!")
+	err = c.createSession(ctx, ssoUser, ssoPass)
 	if err != nil {
 		t.Fatal("failed: authentication failed")
 	}
