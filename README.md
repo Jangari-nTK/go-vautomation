@@ -1,3 +1,3 @@
 # go-vautomation (WIP)
 
-This repository contains Go implementation for vSphere Automation API.
+This repository contains Golang bindings for vSphere Automation API.
