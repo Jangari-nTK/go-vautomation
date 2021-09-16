@@ -63,7 +63,8 @@ func TestCreateSessionSuccess(t *testing.T) {
 		t.Fatal("failed: cannot create API client")
 	}
 
-	err = c.createSession(context.Background(), "administrator@vsphere.local", "VMware1!")
+	ctx := context.Background()
+	err = c.createSession(ctx, "administrator@vsphere.local", "VMware1!")
 	if err != nil {
 		t.Fatal("failed: cannot create API session", err.Error())
 	}
@@ -80,9 +81,40 @@ func TestCreateSessionFailedByIncorrectCredential(t *testing.T) {
 		t.Fatal("failed: cannot create API client")
 	}
 
-	err = c.createSession(context.Background(), "administrator@vsphere.local", "aaaa")
+	ctx := context.Background()
+	err = c.createSession(ctx, "administrator@vsphere.local", "aaaa")
 	if err == nil {
 		t.Fatal("failed: unexpected authentication occured")
 	}
 	fmt.Println(err)
+}
+
+func TestCreateVcenterTlsCsrSuccess(t *testing.T) {
+	c, err := NewClient(vcUrl, nil)
+	if err != nil {
+		t.Fatal("failed: cannot create API client")
+	}
+
+	ctx := context.Background()
+	err = c.createSession(ctx, "administrator@vsphere.local", "VMware1!")
+	if err != nil {
+		t.Fatal("failed: authentication failed")
+	}
+
+	spec := CertificateManagementVcenterTlsCsrSpec{
+		"vcsa.tanzu.local",
+		"US",
+		"admin@example.com",
+		2048,
+		"Palo Alto",
+		"VMware",
+		"VMware Engineering",
+		"California",
+		[]string{"vcsa.tanzu.local", "192.168.0.1"},
+	}
+	csrStr, err := c.createVcenterTlsCsr(ctx, spec)
+	if err != nil {
+		t.Fatal("failed: cannot retrieve TLS CSR", err.Error())
+	}
+	fmt.Println(csrStr)
 }
