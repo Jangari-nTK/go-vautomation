@@ -1,6 +1,6 @@
 package vsphere
 
-type APIError struct {
+type Error struct {
 	Error_Type string                   `json:"error_type"`
 	Messages   []map[string]interface{} `json:"messages"`
 	Data       interface{}              `json:"data"`

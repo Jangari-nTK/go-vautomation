@@ -96,7 +96,7 @@ func (c *Client) createSession(ctx context.Context, username, password string) e
 	}
 
 	if res.StatusCode != 201 {
-		var apiError APIError
+		var apiError Error
 		if err := decodeBody(res, &apiError); err != nil {
 			return err
 		}

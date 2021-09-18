@@ -22,7 +22,7 @@ func (c *Client) createVcenterTlsCsr(ctx context.Context, spec CertificateManage
 	}
 
 	if res.StatusCode != 201 {
-		var apiError APIError
+		var apiError Error
 		if err := decodeBody(res, &apiError); err != nil {
 			return "", err
 		}
