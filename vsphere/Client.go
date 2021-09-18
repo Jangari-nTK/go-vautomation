@@ -1,7 +1,6 @@
 package vsphere
 
 import (
-	"bytes"
 	"context"
 	"crypto/tls"
 	"encoding/json"
@@ -12,7 +11,6 @@ import (
 	"net/http"
 	"net/url"
 	"path"
-	"runtime"
 
 	"github.com/pkg/errors"
 )
@@ -25,27 +23,9 @@ type Client struct {
 	Logger    *log.Logger
 }
 
-type APIError struct {
-	Error_Type string                   `json:"error_type"`
-	Messages   []map[string]interface{} `json:"messages"`
-	Data       interface{}              `json:"data"`
-}
-
-type CertificateManagementVcenterTlsCsrSpec struct {
-	Common_Name       string   `json:"common_name"`
-	Country           string   `json:"country"`
-	Email_Address     string   `json:"email_address"`
-	Key_Size          int      `json:"key_size"`
-	Locality          string   `json:"locality"`
-	Organization      string   `json:"organization"`
-	Organization_Unit string   `json:"organization_unit"`
-	State_Or_Province string   `json:"state_or_province"`
-	Subject_Alt_Name  []string `json:"subject_alt_name"`
-}
-
 const version = "v0.1"
 
-var userAgent = fmt.Sprintf("XXXGoClient/%s (%s)", version, runtime.Version())
+var userAgent = fmt.Sprintf("XXXGoClient/%s", version)
 
 func decodeBody(res *http.Response, out interface{}) error {
 	defer res.Body.Close()
@@ -132,33 +112,4 @@ func (c *Client) createSession(ctx context.Context, username, password string) e
 	c.SessionID = sessionId
 
 	return nil
-}
-
-func (c *Client) createVcenterTlsCsr(ctx context.Context, spec CertificateManagementVcenterTlsCsrSpec) (string, error) {
-	jsonBytes, _ := json.Marshal(spec)
-	req, err := c.newRequest(ctx, "POST", "/api/vcenter/certificate-management/vcenter/tls-csr", bytes.NewBuffer(jsonBytes), true)
-	if err != nil {
-		return "", err
-	}
-
-	res, err := c.HTTPClient.Do(req)
-	if err != nil {
-		return "", err
-	}
-
-	if res.StatusCode != 201 {
-		var apiError APIError
-		if err := decodeBody(res, &apiError); err != nil {
-			return "", err
-		}
-		return "", errors.New(
-			fmt.Sprintf("status:%s messages:%s id:%s", apiError.Error_Type, apiError.Messages[0]["default_message"], apiError.Messages[0]["id"]),
-		)
-	}
-
-	var csrStr map[string]string
-	if err := decodeBody(res, &csrStr); err != nil {
-		return "", err
-	}
-	return csrStr["csr"], nil
 }
