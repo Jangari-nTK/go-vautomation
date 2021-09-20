@@ -33,3 +33,21 @@ func TestCreateVcenterTlsCsrSuccess(t *testing.T) {
 		t.Fatal("failed: cannot retrieve TLS CSR", err.Error())
 	}
 }
+
+func TestRenewVcenterTlsSuccess(t *testing.T) {
+	c, err := NewClient(vcUrl, nil)
+	if err != nil {
+		t.Fatal("failed: cannot create API client")
+	}
+
+	ctx := context.Background()
+	err = c.createSession(ctx, ssoUser, ssoPass)
+	if err != nil {
+		t.Fatal("failed: authentication failed")
+	}
+
+	err = c.renewVcenterTls(ctx, 730)
+	if err != nil {
+		t.Fatal("failed: ", err.Error())
+	}
+}

@@ -6,7 +6,7 @@ import (
 	"testing"
 )
 
-const vcUrl = "https://vcsa.tanzu.local"
+const vcUrl = "https://vcsa.api.lab"
 const ssoUser = "administrator@vsphere.local"
 const ssoPass = "VMware1!"
 

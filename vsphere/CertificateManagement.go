@@ -12,13 +12,19 @@ func (c *Client) renewVcenterTls(ctx context.Context, duration int) error {
 	if duration > 730 {
 		return errors.New("invalid duration")
 	}
+	if duration <= 0 {
+		return errors.New("duration must be greater than 0")
+	}
 	jsonBytes, _ := json.Marshal(map[string]int{
 		"duration": duration,
 	})
-	req, err := c.newRequest(ctx, "POST", "/api/vcenter/certificate-management/vcenter/tls?action=renew", bytes.NewBuffer(jsonBytes), true)
+	req, err := c.newRequest(ctx, "POST", "/api/vcenter/certificate-management/vcenter/tls", bytes.NewBuffer(jsonBytes), true)
 	if err != nil {
 		return err
 	}
+	params := req.URL.Query()
+	params.Add("action", "renew")
+	req.URL.RawQuery = params.Encode()
 
 	res, err := c.HTTPClient.Do(req)
 	if err != nil {
