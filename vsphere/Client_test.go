@@ -74,7 +74,6 @@ func TestCreateSessionSuccess(t *testing.T) {
 	if c.SessionID == "" {
 		t.Fatal("failed: Session id is not set")
 	}
-	fmt.Println(c.SessionID)
 }
 
 func TestCreateSessionFailedByIncorrectCredential(t *testing.T) {

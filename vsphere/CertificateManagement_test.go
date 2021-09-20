@@ -2,7 +2,6 @@ package vsphere
 
 import (
 	"context"
-	"fmt"
 	"testing"
 )
 
@@ -29,9 +28,8 @@ func TestCreateVcenterTlsCsrSuccess(t *testing.T) {
 		"California",
 		[]string{"vcsa.tanzu.local", "192.168.0.1"},
 	}
-	csrStr, err := c.createVcenterTlsCsr(ctx, spec)
+	_, err = c.createVcenterTlsCsr(ctx, spec)
 	if err != nil {
 		t.Fatal("failed: cannot retrieve TLS CSR", err.Error())
 	}
-	fmt.Println(csrStr)
 }

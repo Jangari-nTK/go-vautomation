@@ -1,9 +1,21 @@
 package vsphere
 
+import (
+	"encoding/json"
+)
+
 type Error struct {
 	Error_Type string                   `json:"error_type"`
 	Messages   []map[string]interface{} `json:"messages"`
 	Data       interface{}              `json:"data"`
+}
+
+func (e *Error) Error() string {
+	jsonBytes, err := json.Marshal(e)
+	if err != nil {
+		return err.Error()
+	}
+	return string(jsonBytes)
 }
 
 type CertificateManagementVcenterTlsCsrSpec struct {

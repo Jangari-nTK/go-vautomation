@@ -100,9 +100,7 @@ func (c *Client) createSession(ctx context.Context, username, password string) e
 		if err := decodeBody(res, &apiError); err != nil {
 			return err
 		}
-		return errors.New(
-			fmt.Sprintf("status:%s messages:%s id:%s", apiError.Error_Type, apiError.Messages[0]["default_message"], apiError.Messages[0]["id"]),
-		)
+		return &apiError
 	}
 
 	var sessionId string

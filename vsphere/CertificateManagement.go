@@ -4,10 +4,37 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
-	"fmt"
 
 	"github.com/pkg/errors"
 )
+
+func (c *Client) renewVcenterTls(ctx context.Context, duration int) error {
+	if duration > 730 {
+		return errors.New("invalid duration")
+	}
+	jsonBytes, _ := json.Marshal(map[string]int{
+		"duration": duration,
+	})
+	req, err := c.newRequest(ctx, "POST", "/api/vcenter/certificate-management/vcenter/tls?action=renew", bytes.NewBuffer(jsonBytes), true)
+	if err != nil {
+		return err
+	}
+
+	res, err := c.HTTPClient.Do(req)
+	if err != nil {
+		return err
+	}
+
+	if res.StatusCode != 204 {
+		var apiError Error
+		if err := decodeBody(res, &apiError); err != nil {
+			return err
+		}
+		return &apiError
+	}
+
+	return nil
+}
 
 func (c *Client) createVcenterTlsCsr(ctx context.Context, spec CertificateManagementVcenterTlsCsrSpec) (string, error) {
 	jsonBytes, _ := json.Marshal(spec)
@@ -26,9 +53,7 @@ func (c *Client) createVcenterTlsCsr(ctx context.Context, spec CertificateManage
 		if err := decodeBody(res, &apiError); err != nil {
 			return "", err
 		}
-		return "", errors.New(
-			fmt.Sprintf("status:%s messages:%s id:%s", apiError.Error_Type, apiError.Messages[0]["default_message"], apiError.Messages[0]["id"]),
-		)
+		return "", &apiError
 	}
 
 	var csrStr map[string]string
