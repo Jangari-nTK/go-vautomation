@@ -42,6 +42,32 @@ func (c *Client) renewVcenterTls(ctx context.Context, duration int) error {
 	return nil
 }
 
+func (c *Client) getVcenterTls(ctx context.Context) (*CertificateManagementVcenterTlsInfo, error) {
+	req, err := c.newRequest(ctx, "GET", "/api/vcenter/certificate-management/vcenter/tls", nil, true)
+	if err != nil {
+		return nil, err
+	}
+
+	res, err := c.HTTPClient.Do(req)
+	if err != nil {
+		return nil, err
+	}
+
+	if res.StatusCode != 200 {
+		var apiError Error
+		if err := decodeBody(res, &apiError); err != nil {
+			return nil, err
+		}
+		return nil, &apiError
+	}
+
+	var tlsInfo CertificateManagementVcenterTlsInfo
+	if err := decodeBody(res, &tlsInfo); err != nil {
+		return nil, err
+	}
+	return &tlsInfo, nil
+}
+
 func (c *Client) createVcenterTlsCsr(ctx context.Context, spec CertificateManagementVcenterTlsCsrSpec) (string, error) {
 	jsonBytes, _ := json.Marshal(spec)
 	req, err := c.newRequest(ctx, "POST", "/api/vcenter/certificate-management/vcenter/tls-csr", bytes.NewBuffer(jsonBytes), true)

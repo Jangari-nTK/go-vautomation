@@ -29,3 +29,21 @@ type CertificateManagementVcenterTlsCsrSpec struct {
 	State_Or_Province string   `json:"state_or_province"`
 	Subject_Alt_Name  []string `json:"subject_alt_name"`
 }
+
+type CertificateManagementVcenterTlsInfo struct {
+	Authority_Information_Access_Uri []string
+	Cert                             string
+	Extended_Key_Usage               []string
+	Is_CA                            bool
+	Issuer_DN                        string
+	Key_Usage                        []string
+	Path_Length_Constraint           int
+	Serial_Number                    string
+	Signature_Algorithm              string
+	Subject_Alternative_Name         []string
+	Subject_DN                       string
+	Thumbprint                       string
+	Valid_From                       string
+	Valid_To                         string
+	Version                          int
+}

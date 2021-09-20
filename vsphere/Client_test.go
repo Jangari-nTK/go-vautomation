@@ -2,7 +2,6 @@ package vsphere
 
 import (
 	"context"
-	"fmt"
 	"testing"
 )
 
@@ -87,5 +86,4 @@ func TestCreateSessionFailedByIncorrectCredential(t *testing.T) {
 	if err == nil {
 		t.Fatal("failed: unexpected authentication occured")
 	}
-	fmt.Println(err)
 }
