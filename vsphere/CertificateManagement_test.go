@@ -13,12 +13,12 @@ func TestGetVcenterTlsSuccess(t *testing.T) {
 	}
 
 	ctx := context.Background()
-	err = c.createSession(ctx, ssoUser, ssoPass)
+	err = c.CreateSession(ctx, ssoUser, ssoPass)
 	if err != nil {
 		t.Fatal("failed: authentication failed")
 	}
 
-	_, err = c.getVcenterTls(ctx)
+	_, err = c.GetVcenterTls(ctx)
 	if err != nil {
 		t.Fatal("failed: could not retrieve TLS certificate info", err.Error())
 	}
@@ -31,18 +31,18 @@ func TestRenewVcenterTlsSuccess(t *testing.T) {
 	}
 
 	ctx := context.Background()
-	err = c.createSession(ctx, ssoUser, ssoPass)
+	err = c.CreateSession(ctx, ssoUser, ssoPass)
 	if err != nil {
 		t.Fatal("failed: authentication failed")
 	}
 
-	tlsInfo, err := c.getVcenterTls(ctx)
+	tlsInfo, err := c.GetVcenterTls(ctx)
 	if err != nil {
 		t.Fatal("failed: could not retrieve TLS certificate info", err.Error())
 	}
 	valid_from, _ := time.Parse("2006-01-02T15:04:05.999Z", tlsInfo.Valid_From)
 
-	err = c.renewVcenterTls(ctx, 730)
+	err = c.RenewVcenterTls(ctx, 730)
 	if err != nil {
 		t.Fatal("failed: ", err.Error())
 	}
@@ -51,12 +51,12 @@ func TestRenewVcenterTlsSuccess(t *testing.T) {
 
 	for {
 		time.Sleep(1 * time.Minute)
-		err = c.createSession(ctx, ssoUser, ssoPass)
+		err = c.CreateSession(ctx, ssoUser, ssoPass)
 		if err != nil {
 			t.Log(err.Error())
 			continue
 		}
-		tlsInfo, err = c.getVcenterTls(ctx)
+		tlsInfo, err = c.GetVcenterTls(ctx)
 		if err == nil {
 			break
 		}
@@ -76,7 +76,7 @@ func TestCreateVcenterTlsCsrSuccess(t *testing.T) {
 	}
 
 	ctx := context.Background()
-	err = c.createSession(ctx, ssoUser, ssoPass)
+	err = c.CreateSession(ctx, ssoUser, ssoPass)
 	if err != nil {
 		t.Fatal("failed: authentication failed")
 	}
@@ -92,7 +92,7 @@ func TestCreateVcenterTlsCsrSuccess(t *testing.T) {
 		"California",
 		[]string{"vcsa.api.lab", "192.168.0.160"},
 	}
-	_, err = c.createVcenterTlsCsr(ctx, spec)
+	_, err = c.CreateVcenterTlsCsr(ctx, spec)
 	if err != nil {
 		t.Fatal("failed: cannot retrieve TLS CSR", err.Error())
 	}

@@ -8,7 +8,7 @@ import (
 	"github.com/pkg/errors"
 )
 
-func (c *Client) renewVcenterTls(ctx context.Context, duration int) error {
+func (c *Client) RenewVcenterTls(ctx context.Context, duration int) error {
 	if duration > 730 {
 		return errors.New("invalid duration")
 	}
@@ -42,7 +42,7 @@ func (c *Client) renewVcenterTls(ctx context.Context, duration int) error {
 	return nil
 }
 
-func (c *Client) getVcenterTls(ctx context.Context) (*CertificateManagementVcenterTlsInfo, error) {
+func (c *Client) GetVcenterTls(ctx context.Context) (*CertificateManagementVcenterTlsInfo, error) {
 	req, err := c.newRequest(ctx, "GET", "/api/vcenter/certificate-management/vcenter/tls", nil, true)
 	if err != nil {
 		return nil, err
@@ -68,7 +68,7 @@ func (c *Client) getVcenterTls(ctx context.Context) (*CertificateManagementVcent
 	return &tlsInfo, nil
 }
 
-func (c *Client) createVcenterTlsCsr(ctx context.Context, spec CertificateManagementVcenterTlsCsrSpec) (string, error) {
+func (c *Client) CreateVcenterTlsCsr(ctx context.Context, spec CertificateManagementVcenterTlsCsrSpec) (string, error) {
 	jsonBytes, _ := json.Marshal(spec)
 	req, err := c.newRequest(ctx, "POST", "/api/vcenter/certificate-management/vcenter/tls-csr", bytes.NewBuffer(jsonBytes), true)
 	if err != nil {

@@ -50,7 +50,7 @@ func NewClient(urlStr string, logger *log.Logger) (*Client, error) {
 	return c, nil
 }
 
-func (c *Client) ignoreInsecureTlsCertificate(ignore bool) error {
+func (c *Client) IgnoreInsecureTlsCertificate(ignore bool) error {
 	if ignore {
 		c.HTTPClient.Transport = &http.Transport{
 			TLSClientConfig: &tls.Config{
@@ -83,7 +83,7 @@ func (c *Client) newRequest(ctx context.Context, method, spath string, body io.R
 	return req, nil
 }
 
-func (c *Client) createSession(ctx context.Context, username, password string) error {
+func (c *Client) CreateSession(ctx context.Context, username, password string) error {
 	req, err := c.newRequest(ctx, "POST", "/api/session", nil, false)
 	if err != nil {
 		return err

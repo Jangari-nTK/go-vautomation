@@ -31,19 +31,19 @@ type CertificateManagementVcenterTlsCsrSpec struct {
 }
 
 type CertificateManagementVcenterTlsInfo struct {
-	Authority_Information_Access_Uri []string
-	Cert                             string
-	Extended_Key_Usage               []string
-	Is_CA                            bool
-	Issuer_DN                        string
-	Key_Usage                        []string
-	Path_Length_Constraint           int
-	Serial_Number                    string
-	Signature_Algorithm              string
-	Subject_Alternative_Name         []string
-	Subject_DN                       string
-	Thumbprint                       string
-	Valid_From                       string
-	Valid_To                         string
-	Version                          int
+	Authority_Information_Access_Uri []string `json:"authority_information_access_uri"`
+	Cert                             string   `json:"cert"`
+	Extended_Key_Usage               []string `json:"extended_key_usage"`
+	Is_CA                            bool     `json:"is_CA"`
+	Issuer_DN                        string   `json:"issuer_dn"`
+	Key_Usage                        []string `json:"key_usage"`
+	Path_Length_Constraint           int      `json:"path_length_constraint"`
+	Serial_Number                    string   `json:"serial_number"`
+	Signature_Algorithm              string   `json:"signature_algorithm"`
+	Subject_Alternative_Name         []string `json:"subject_alternative_name"`
+	Subject_DN                       string   `json:"subject_dn"`
+	Thumbprint                       string   `json:"thumbprint"`
+	Valid_From                       string   `json:"valid_from"`
+	Valid_To                         string   `json:"valid_to"`
+	Version                          int      `json:"version"`
 }

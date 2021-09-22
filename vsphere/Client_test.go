@@ -65,7 +65,7 @@ func TestCreateSessionSuccess(t *testing.T) {
 	}
 
 	ctx := context.Background()
-	err = c.createSession(ctx, ssoUser, ssoPass)
+	err = c.CreateSession(ctx, ssoUser, ssoPass)
 	if err != nil {
 		t.Fatal("failed: cannot create API session", err.Error())
 	}
@@ -82,7 +82,7 @@ func TestCreateSessionFailedByIncorrectCredential(t *testing.T) {
 	}
 
 	ctx := context.Background()
-	err = c.createSession(ctx, ssoUser, "incorrectPassword")
+	err = c.CreateSession(ctx, ssoUser, "incorrectPassword")
 	if err == nil {
 		t.Fatal("failed: unexpected authentication occured")
 	}
