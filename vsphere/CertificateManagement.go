@@ -18,7 +18,7 @@ func (c *Client) RenewVcenterTls(ctx context.Context, duration int) error {
 	jsonBytes, _ := json.Marshal(map[string]int{
 		"duration": duration,
 	})
-	req, err := c.newRequest(ctx, "POST", "/api/vcenter/certificate-management/vcenter/tls", bytes.NewBuffer(jsonBytes), true)
+	req, err := c.NewRequest(ctx, "POST", "/api/vcenter/certificate-management/vcenter/tls", bytes.NewBuffer(jsonBytes), true)
 	if err != nil {
 		return err
 	}
@@ -43,7 +43,7 @@ func (c *Client) RenewVcenterTls(ctx context.Context, duration int) error {
 }
 
 func (c *Client) GetVcenterTls(ctx context.Context) (*CertificateManagementVcenterTlsInfo, error) {
-	req, err := c.newRequest(ctx, "GET", "/api/vcenter/certificate-management/vcenter/tls", nil, true)
+	req, err := c.NewRequest(ctx, "GET", "/api/vcenter/certificate-management/vcenter/tls", nil, true)
 	if err != nil {
 		return nil, err
 	}
@@ -70,7 +70,7 @@ func (c *Client) GetVcenterTls(ctx context.Context) (*CertificateManagementVcent
 
 func (c *Client) CreateVcenterTlsCsr(ctx context.Context, spec CertificateManagementVcenterTlsCsrSpec) (string, error) {
 	jsonBytes, _ := json.Marshal(spec)
-	req, err := c.newRequest(ctx, "POST", "/api/vcenter/certificate-management/vcenter/tls-csr", bytes.NewBuffer(jsonBytes), true)
+	req, err := c.NewRequest(ctx, "POST", "/api/vcenter/certificate-management/vcenter/tls-csr", bytes.NewBuffer(jsonBytes), true)
 	if err != nil {
 		return "", err
 	}

@@ -34,7 +34,6 @@ func decodeBody(res *http.Response, out interface{}) error {
 }
 
 func NewClient(urlStr string, logger *log.Logger) (*Client, error) {
-
 	parsedURL, err := url.ParseRequestURI(urlStr)
 	if err != nil {
 		return nil, errors.Wrapf(err, "failed to parse URL: %s", urlStr)
@@ -61,7 +60,7 @@ func (c *Client) IgnoreInsecureTlsCertificate(ignore bool) error {
 	return nil
 }
 
-func (c *Client) newRequest(ctx context.Context, method, spath string, body io.Reader, useSessionId bool) (*http.Request, error) {
+func (c *Client) NewRequest(ctx context.Context, method, spath string, body io.Reader, useSessionId bool) (*http.Request, error) {
 	u := *c.URL
 	u.Path = path.Join(c.URL.Path, spath)
 
@@ -84,7 +83,7 @@ func (c *Client) newRequest(ctx context.Context, method, spath string, body io.R
 }
 
 func (c *Client) CreateSession(ctx context.Context, username, password string) error {
-	req, err := c.newRequest(ctx, "POST", "/api/session", nil, false)
+	req, err := c.NewRequest(ctx, "POST", "/api/session", nil, false)
 	if err != nil {
 		return err
 	}

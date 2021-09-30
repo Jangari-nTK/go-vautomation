@@ -1,13 +1,49 @@
-package vsphere
+package integration_tests
 
 import (
 	"context"
 	"testing"
 	"time"
+
+	"github.com/Jangari-nTK/go-vautomation/vsphere"
 )
 
+const vcUrl = "https://vcsa.api.lab"
+const ssoUser = "administrator@vsphere.local"
+const ssoPass = "VMware1!"
+
+func TestCreateSessionSuccess(t *testing.T) {
+	c, err := vsphere.NewClient(vcUrl, nil)
+	if err != nil {
+		t.Fatal("failed: cannot create API client")
+	}
+
+	ctx := context.Background()
+	err = c.CreateSession(ctx, ssoUser, ssoPass)
+	if err != nil {
+		t.Fatal("failed: cannot create API session", err.Error())
+	}
+
+	if c.SessionID == "" {
+		t.Fatal("failed: Session id is not set")
+	}
+}
+
+func TestCreateSessionFailedByIncorrectCredential(t *testing.T) {
+	c, err := vsphere.NewClient(vcUrl, nil)
+	if err != nil {
+		t.Fatal("failed: cannot create API client")
+	}
+
+	ctx := context.Background()
+	err = c.CreateSession(ctx, ssoUser, "incorrectPassword")
+	if err == nil {
+		t.Fatal("failed: unexpected authentication occured")
+	}
+}
+
 func TestGetVcenterTlsSuccess(t *testing.T) {
-	c, err := NewClient(vcUrl, nil)
+	c, err := vsphere.NewClient(vcUrl, nil)
 	if err != nil {
 		t.Fatal("failed: cannot create API client")
 	}
@@ -25,7 +61,7 @@ func TestGetVcenterTlsSuccess(t *testing.T) {
 }
 
 func TestRenewVcenterTlsSuccess(t *testing.T) {
-	c, err := NewClient(vcUrl, nil)
+	c, err := vsphere.NewClient(vcUrl, nil)
 	if err != nil {
 		t.Fatal("failed: cannot create API client")
 	}
@@ -70,7 +106,7 @@ func TestRenewVcenterTlsSuccess(t *testing.T) {
 }
 
 func TestCreateVcenterTlsCsrSuccess(t *testing.T) {
-	c, err := NewClient(vcUrl, nil)
+	c, err := vsphere.NewClient(vcUrl, nil)
 	if err != nil {
 		t.Fatal("failed: cannot create API client")
 	}
@@ -81,7 +117,7 @@ func TestCreateVcenterTlsCsrSuccess(t *testing.T) {
 		t.Fatal("failed: authentication failed")
 	}
 
-	spec := CertificateManagementVcenterTlsCsrSpec{
+	spec := vsphere.CertificateManagementVcenterTlsCsrSpec{
 		"vcsa.api.lab",
 		"US",
 		"admin@example.com",
